@@ -1,0 +1,180 @@
+---
+vagrantfile-local:
+    vm:
+        box: centos64-x64-vbox43-1383512148
+        box_url: 'http://box.puphpet.com/centos64-x64-vbox43.box'
+        hostname: 'wms-centos-64-dev'
+        network:
+            private_network: 192.168.56.101
+            forwarded_port:
+                y66abEimVdck:
+                    host: '9611'
+                    guest: '22'
+        provider:
+            virtualbox:
+                modifyvm:
+                    natdnshostresolver1: on
+                    memory: '1024'
+                setextradata:
+                    VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root: 1
+        provision:
+            puppet:
+                manifests_path: puphpet/puppet
+                manifest_file: manifest.pp
+                options:
+                    - '--verbose'
+                    - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
+                    - '--parser future'
+        synced_folder:
+            r30AGQhEKfJM:
+                id: vagrant-root
+                source: ./www/html
+                target: /var/www/html
+                nfs: 'false'
+        usable_port_range: 2200..2250
+    ssh:
+        host: null
+        port: null
+        private_key_path: null
+        username: vagrant
+        guest_port: null
+        keep_alive: true
+        forward_agent: false
+        forward_x11: false
+        shell: 'bash -l'
+    vagrant:
+        host: detect
+server:
+    packages:
+        - vim-common
+        - ncurses-devel
+        - ncurses
+        - lua
+        - lua-devel
+        - ruby-devel
+        - ruby
+        - perl-devel
+        - python
+        - python-devel
+        - mod_ssl
+        - make
+        - gcc
+    dot_files:
+        -
+            bash_aliases: null
+    _prevent_empty: ''
+mailcatcher:
+    install: 0
+    settings:
+        smtp_ip: 0.0.0.0
+        smtp_port: 1025
+        http_ip: 0.0.0.0
+        http_port: '1080'
+        path: /usr/local/bin
+        log: /var/log/mailcatcher/mailcatcher.log
+apache:
+    modules:
+        - php
+        - rewrite
+        - info
+        - ldap
+        - ssl
+        - vhost_alias
+    vhosts:
+        qm2wCVWb2SUu:
+            servername: wms-dev.library.mcgill.ca
+            serveraliases:
+                - wms-dev.library.mcgill.ca
+            docroot: /var/www/html/drp_wms
+            port: '80'
+            setenv:
+                - 'APP_ENV dev'
+            override:
+                - All
+    user: www-data
+    group: www-data
+    default_vhost: true
+    mod_pagespeed: '0'
+    mod_spdy: '0'
+php:
+    install: '1'
+    version: '53'
+    composer: '1'
+    modules:
+        php:
+            - intl
+            - mcrypt
+            - common
+            - ldap
+            - mbstring
+            - tidy
+            - xmlrpc
+            - fpm
+        pear:
+            - Console_CommandLine
+            - Log
+            - PHP_CodeSniffer
+            - XML_RPC2
+            - PHPUnit
+        pecl:
+            - APC
+            - memcached
+            - PDO
+            - uploadprogress
+    ini:
+        display_errors: On
+        error_reporting: '-1'
+        session.save_path: /var/lib/php/session
+        memory_limit: '256M'
+    timezone: America/Montreal
+xdebug:
+    install: '1'
+    settings:
+        xdebug.default_enable: '1'
+        xdebug.remote_autostart: '0'
+        xdebug.remote_connect_back: '1'
+        xdebug.remote_enable: '1'
+        xdebug.remote_handler: dbgp
+        xdebug.remote_port: '9000'
+xhprof:
+    install: '1'
+drush:
+    install: '1'
+    settings:
+        drush.tag_branch: 6.x
+mysql:
+    root_password: R66z5R4u
+    phpmyadmin: 0
+    adminer: 0
+    databases:
+        2evjtj6hU0f0:
+            grant:
+                - ALL
+            name: library
+            host: localhost
+            user: library-user
+            password: R66z5R4u
+            sql_file: ''
+mongodb:
+    install: '1'
+    auth: 1
+    port: '27017'
+    databases: {  }
+beanstalkd:
+    install: '1'
+    settings:
+        listenaddress: 0.0.0.0
+        listenport: '13000'
+        maxjobsize: '65535'
+        maxconnections: '1024'
+        binlogdir: /var/lib/beanstalkd/binlog
+        binlogfsync: null
+        binlogsize: '10485760'
+    beanstalk_console: '1'
+    binlogdir: /var/lib/beanstalkd/binlog
+rabbitmq:
+    install: 0
+    port: '5672'
+elastic_search:
+    install: '1'
+
