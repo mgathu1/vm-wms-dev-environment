@@ -118,6 +118,7 @@ set magic
 
 " Show matching brackets when text indicator is over them
 set showmatch
+
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
@@ -139,6 +140,8 @@ syntax enable
 
 try
     colorscheme desert
+    set background=light
+    colorscheme solarized
 catch
 endtry
 
@@ -189,6 +192,13 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
+set cursorline
+
+set cursorline
+set cursorcolumn
+set number
+set nu
+set t_Co=256
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -412,3 +422,96 @@ function! <SID>BufcloseCloseIt()
      execute("bdelete! ".l:currentBufNum)
    endif
 endfunction
+
+
+" The following function strips trailing whitespaces from a file.
+function! <SID>StripTrailingWhitespaces()
+  " Preparation - save last search, and cursor position:
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  %s/\s\+$//e
+  " Clean up - restore previous search history, and cursor position:
+  let @/=_s
+  call cursor(l, c)
+endfunction
+" This command applies the previous function to any Drupal file on :w.
+autocmd BufWritePre *.module,*.install,*.test,*.inc,*.profile,*.view :call <SID>StripTrailingWhitespaces()
+
+" Drupal *.module and *.install files should be code highlighted like php.
+autocmd BufRead,BufNewFile *.module,*.install,*.test,*.inc,*.profile,*.view set filetype=php
+
+" Other filetypes.
+autocmd BufRead,BufNewFile *.md set filetype=markdown
+autocmd BufRead,BufNewFile *.dump set filetype=sql
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplcache#undo_completion()
+inoremap <expr><C-l>     neocomplcache#complete_common_string()
+" Fix backspace indentation
+set backspace=indent,eol,start
+
+" Code Folding, everything folded by default
+set foldmethod=indent
+set foldlevel=99
+set foldenable
+" Activate a permanent ruler 
+set ruler
+" Split window management
+nnoremap <leader>w <C-w>v<C-w>l
+nnoremap <leader>W <C-w>s
+nnoremap <leader>s :new<CR>
+
+autocmd FileType html,xhtml,xml,htmldjango,htmljinja,eruby,mako setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+autocmd BufNewFile,BufRead *.rhtml setlocal ft=eruby
+autocmd BufNewFile,BufRead *.mako setlocal ft=mako
+autocmd BufNewFile,BufRead *.tmpl setlocal ft=htmljinja
+autocmd BufNewFile,BufRead *.py_tmpl setlocal ft=python
+autocmd BufNewFile,BufRead *.html,*.htm  call SelectHTML()
+let html_no_rendering=1
+
+autocmd FileType html,htmldjango,htmljinja,eruby,mako let b:closetag_html_style=1
+autocmd FileType html,xhtml,xml,htmldjango,htmljinja,eruby,mako source ~/.vim/bundle/closetag/plugin/closetag.vim
+
+" CSS
+" ---
+autocmd FileType css setlocal expandtab shiftwidth=4 tabstop=4 softtabstop=4
+
+" markdown
+" ---
+autocmd BufNewFile,BufRead *.txt,*.markdown,*.md setlocal ft=markdown colorcolumn=79
+autocmd FileType rst setlocal expandtab shiftwidth=4 tabstop=4 softtabstop=4 colorcolumn=79
+
+" vim
+" ---
+autocmd FileType vim setlocal expandtab shiftwidth=2 tabstop=8 softtabstop=2
+
+
+" Javascript
+" ----------
+autocmd FileType javascript setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2 colorcolumn=79
+let javascript_enable_domhtmlcss=1
+
+
+
+" Enable automatic title setting for terminals
+
+  if has("autocmd")
+      " Drupal *.module and *.install files.
+  augroup module
+       autocmd BufRead,BufNewFile *.module set filetype=php
+       autocmd BufRead,BufNewFile *.install set filetype=php
+       autocmd BufRead,BufNewFile *.test set filetype=php
+       autocmd BufRead,BufNewFile *.inc set filetype=php
+       autocmd BufRead,BufNewFile *.profile set filetype=php
+       autocmd BufRead,BufNewFile *.view set filetype=php
+  augroup END
+  endif

@@ -4,6 +4,7 @@ dir = File.dirname(File.expand_path(__FILE__))
 
 configValues = YAML.load_file("#{dir}/puphpet/config.yaml")
 data = configValues['vagrantfile-local']
+TimeZone = `systemsetup -gettimezone | cut -d':' -f2`
 
 Vagrant.configure("2") do |config|
   config.vm.box = "#{data['vm']['box']}"
@@ -32,6 +33,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.usable_port_range = (10200..10500)
 
+
   if !data['vm']['provider']['virtualbox'].empty?
     config.vm.provider :virtualbox do |virtualbox|
       data['vm']['provider']['virtualbox']['modifyvm'].each do |key, value|
@@ -49,6 +51,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision :shell, :path => "puphpet/shell/update-puppet.sh"
   config.vm.provision :shell, :path => "puphpet/shell/librarian-puppet-vagrant.sh"
+  config.vm.provision "shell", path: "puphpet/shell/guest-host-timezone-map.sh", args:TimeZone
 
   config.vm.provision :puppet do |puppet|
     ssh_username = !data['ssh']['username'].nil? ? data['ssh']['username'] : "vagrant"

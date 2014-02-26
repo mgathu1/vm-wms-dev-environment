@@ -882,7 +882,7 @@ if has_key($mongodb_values, 'install') and $mongodb_values['install'] == 1 {
       class {'::mongodb::server':
         auth   => $mongodb_values['auth'],
         port   => $mongodb_values['port'],
-        ensure => "stopped",
+        ensure => "stopped"
       }->
       class {'::mongodb::client': }
 
